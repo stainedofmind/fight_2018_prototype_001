@@ -1,0 +1,12 @@
+body {
+    background-color: black;
+    color: white;
+}
+
+#f18_title {
+    text-align: center;
+}
+
+#f18_footer {
+    color: gray;
+}

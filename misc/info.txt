@@ -1,0 +1,19 @@
+Action Types:
+	Command:	Basic actions, such as Fight, Flee, Defend, etc...
+	Magic:		Actions that typically cost MP to use
+	Skill:		Actions that cost points from thier own individual pool of points
+
+Magic Types:
+	Damage/Restore Stat
+	Syphon Stat
+	Apply/Remove Status Effect
+
+Status Types:
+	Modify Stat Singular
+	Modify Stat Per Round
+
+Status Effects:
+	Death
+	Poison
+	Curse
+	Regen
