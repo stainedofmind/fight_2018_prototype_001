@@ -76,7 +76,7 @@ var f18_proto = function ()
 
         function file_test ()
         {
-            _build.add_text('<input id="file_test" type="file">');
+            _build.add_text('<input id="file_test" type="file" multiple><p />');
             _build.add_button("but_read", "Read File", "f18_proto.page.text_display();");
             _build.apply_html("f18_main");
         }
@@ -104,39 +104,56 @@ var f18_proto = function ()
 
         function text_display ()
         {
-            var name = document.getElementById('file_test');
-            var text = readTextFile(name.files.item(0).name);
-            var textByLine = text.split("\n");
-
-            for (var i = 0; i < textByLine.length; i++)
-            {
-                _build.add_text(textByLine[i]);
-                _build.add_text("<br />");
-            }
-
             const fs = require('fs');
 
-            // Data which will write in a file.
-            //let data = "Learning how to write in a file."
-
-            // Write data in 'Output.txt' .
-            //fs.writeFile('Output.txt', data, (err) => {
-
-                // In case of a error throw err.
-                //if (err) throw err;
-            //})
+            var list = document.getElementById('file_test');
 
             if (!fs.existsSync("backup"))
             {
                 fs.mkdirSync("backup");
             }
 
-            if (!fs.existsSync("backup/derp"))
+            var d = new Date();
+
+            var dir = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + "." + d.getMinutes() + "." + d.getSeconds();
+
+            if (!fs.existsSync("backup/" + dir))
             {
-                fs.mkdirSync("backup/derp");
+                fs.mkdirSync("backup/" + dir);
             }
 
-            fs.copyFileSync(name.files.item(0).name, 'backup/derp/' + name.files.item(0).name);
+            for (var x = 0; x < list.files.length; x++)
+            {
+                var f = list.files[x];
+                var _dir = f.path.slice(0, f.path.lastIndexOf('\\') + 1);
+                var text = readTextFile(_dir + f.name);
+                var lines = text.split("\n");
+
+                _build.add_text("<h3>" + _dir + f.name + "</h3>");
+                _build.add_text("<hr />");
+
+                for (var i = 0; i < lines.length; i++)
+                {
+                    _build.add_text(lines[i]);
+                    _build.add_line_break();
+
+                    // Modify the lines somehow
+                    lines[i] = lines[i].toUpperCase();
+                }
+
+                _build.add_text("<hr />");
+
+                fs.copyFileSync(_dir + f.name, 'backup/' + dir + '/' + f.name);
+
+                // Recreate files with modified data
+                var data = lines.join("\n");
+
+                fs.writeFile(_dir + f.name, data, (err) => {
+
+                    // In case of a error throw err.
+                    if (err) throw err;
+                });
+            }
 
             _build.apply_html("f18_main");
         }
