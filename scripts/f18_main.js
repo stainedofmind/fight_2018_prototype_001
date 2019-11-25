@@ -19,97 +19,26 @@ var f18_proto = function ()
         page.test();
     }
 
-    // GOBS
-    var gob = function ()
+    function readTextFile(file)
     {
-        var unit_test = (name) =>
+        var rawFile = new XMLHttpRequest();
+        var allText = "";
+
+        rawFile.open("GET", file, false);
+        rawFile.onreadystatechange = function ()
         {
-            let state =
+            if(rawFile.readyState === 4)
             {
-                name,
-                test: "Billy"
-            }
-
-            let act_greet = (state) =>
-            ({
-                say_hi: () => {
-                    //alert(state.name)
-                    return ("Hello, my name is " + state.name);
+                if(rawFile.status === 200 || rawFile.status == 0)
+                {
+                    allText = rawFile.responseText;
+                    //alert(allText);
                 }
-            })
-
-            let act_yell = (state) =>
-            ({
-                yell: () => {
-                    //alert(state.name)
-                    return ("I SAID MY FUCKIN' NAME IS " + state.name.toUpperCase() + "!!!");
-                }
-            })
-
-            return Object.assign(
-                state,
-                act_greet(state),
-                act_yell(state)
-            )
-        }
-
-        var actor = (id) =>
-        {
-            let state =
-            {
-                id,
-                name: "",
-                lv: 0,
-                mhp: 0,
-                chp: 0,
-                mmp: 0,
-                cmp: 0,
-                mdp: 0, // Max Defense Points
-                cdp: 0,
-                str: 0,
-                def: 0,
-                agi: 0,
-                int: 0,
-                magic: [],
-                skill: [],
-                equip: { m_hand: "", o_hand: "", head: "", body: "", acc_1: "", acc_2: "" }
-            }
-
-            let gob_test = (state) =>
-            ({
-                get_id: () => {
-                    //alert(state.id)
-                    return ("ID: " + state.id);
-                }
-            })
-
-            // Get data here
-            return Object.assign(
-                state,
-                gob_test(state)
-            )
-        }
-
-        var spell = (id) =>
-        {
-            let state =
-            {
-                id,
-                name: "",
-                type: ""
-            }
-
-            return Object.assign(
-                state
             }
         }
-
-        return {
-            unit_test: unit_test,
-            actor: actor,
-            spell: spell
-        };
-    }();
+        rawFile.send(null);
+        return (allText);
+    }
 
     // Page Generation
     var page = function ()
@@ -135,7 +64,7 @@ var f18_proto = function ()
             _build.add_text("<h1 id='f18_title'>Fight 2018 Prototype</h1>");
             _build.apply_html("f18_header");
 
-            _build.add_button("but_test", "Run", "f18_proto.page.welcome();");
+            _build.add_button("but_test", "Run", "f18_proto.page.file_test();");
             _build.apply_html("f18_main");
 
             if (_show_debug)
@@ -145,30 +74,85 @@ var f18_proto = function ()
             }
         };
 
+        function file_test ()
+        {
+            _build.add_text('<input id="file_test" type="file">');
+            _build.add_button("but_read", "Read File", "f18_proto.page.text_display();");
+            _build.apply_html("f18_main");
+        }
+
         function welcome ()
         {
-            var act_cloud = gob.actor("Cloud Strife");
-            var test = f18_proto.gob.unit_test("Bob");
+            function new_actor (name)
+            {
+                return ({name, hp: 0});
+            }
 
-            _build.add_text(test.say_hi());
+            function new_pc (name, job)
+            {
+                return (Object.assign(new_actor(name), {job}));
+            }
+
+            var guy = new_pc("Bob", "Guy");
+            var gal = new_pc("Jane", "Gal");
+
+            _build.add_text(guy.name + " " + guy.job);
             _build.add_line_break();
-            _build.add_text(act_cloud.get_id());
-            _build.add_line_break();
-            _build.add_text(act_cloud.equip.m_hand);
+            _build.add_text(gal.name + " " + gal.job);
+            _build.apply_html("f18_main");
+        }
+
+        function text_display ()
+        {
+            var name = document.getElementById('file_test');
+            var text = readTextFile(name.files.item(0).name);
+            var textByLine = text.split("\n");
+
+            for (var i = 0; i < textByLine.length; i++)
+            {
+                _build.add_text(textByLine[i]);
+                _build.add_text("<br />");
+            }
+
+            const fs = require('fs');
+
+            // Data which will write in a file.
+            //let data = "Learning how to write in a file."
+
+            // Write data in 'Output.txt' .
+            //fs.writeFile('Output.txt', data, (err) => {
+
+                // In case of a error throw err.
+                //if (err) throw err;
+            //})
+
+            if (!fs.existsSync("backup"))
+            {
+                fs.mkdirSync("backup");
+            }
+
+            if (!fs.existsSync("backup/derp"))
+            {
+                fs.mkdirSync("backup/derp");
+            }
+
+            fs.copyFileSync(name.files.item(0).name, 'backup/derp/' + name.files.item(0).name);
+
             _build.apply_html("f18_main");
         }
 
         return {
             main: main,
             test: test,
-            welcome: welcome
+            welcome: welcome,
+            file_test: file_test,
+            text_display: text_display
         };
     }();
 
     return {
         init: init,
         page: page,
-        set_debug: set_debug,
-        gob: gob
+        set_debug: set_debug
     };
 }();
