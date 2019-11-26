@@ -2,9 +2,15 @@ var rw_scripts = function ()
 {
 	var text = "Wobble";
 
+	// Unclassified functions
 	function test ()
 	{
 		return (text);
+	};
+
+	function is_array (data)
+	{
+		return (typeof members === 'object' && typeof members.slice === 'function');
 	};
 
 	var math = function ()
@@ -121,6 +127,7 @@ var rw_scripts = function ()
 
 	return {
 		test: test(),
+		is_array: is_array,
 		math: math,
 		html: html
 	};
