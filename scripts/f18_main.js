@@ -19,6 +19,7 @@ var f18_proto = function ()
         page.test();
     }
 
+    // Temporary, will probably look into using fs instead.
     function readTextFile(file)
     {
         var rawFile = new XMLHttpRequest();
