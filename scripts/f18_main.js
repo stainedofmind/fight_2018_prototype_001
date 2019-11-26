@@ -108,6 +108,11 @@ var f18_proto = function ()
 
             var list = document.getElementById('file_test');
 
+            if (!fs.existsSync("output"))
+            {
+                fs.mkdirSync("output");
+            }
+
             if (!fs.existsSync("backup"))
             {
                 fs.mkdirSync("backup");
@@ -148,7 +153,7 @@ var f18_proto = function ()
                 // Recreate files with modified data
                 var data = lines.join("\n");
 
-                fs.writeFile(_dir + f.name, data, (err) => {
+                fs.writeFile(_dir + "output/" + f.name, data, (err) => {
 
                     // In case of a error throw err.
                     if (err) throw err;
