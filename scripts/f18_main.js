@@ -19,28 +19,6 @@ var f18_proto = function ()
         page.test();
     }
 
-    // Temporary, will probably look into using fs instead.
-    function readTextFile(file)
-    {
-        var rawFile = new XMLHttpRequest();
-        var allText = "";
-
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function ()
-        {
-            if(rawFile.readyState === 4)
-            {
-                if(rawFile.status === 200 || rawFile.status == 0)
-                {
-                    allText = rawFile.responseText;
-                    //alert(allText);
-                }
-            }
-        }
-        rawFile.send(null);
-        return (allText);
-    }
-
     // Page Generation
     var page = function ()
     {
@@ -109,6 +87,7 @@ var f18_proto = function ()
 
             var list = document.getElementById('file_test');
 
+            // Added this folder so I didn't keep wrecking things!
             if (!fs.existsSync("output"))
             {
                 fs.mkdirSync("output");
@@ -132,7 +111,8 @@ var f18_proto = function ()
             {
                 var f = list.files[x];
                 var _dir = f.path.slice(0, f.path.lastIndexOf('\\') + 1);
-                var text = readTextFile(_dir + f.name);
+                //var text = readTextFile(_dir + f.name);
+                var text = fs.readFileSync(_dir + f.name, "utf8");
                 var lines = text.split("\n");
 
                 _build.add_text("<h3>" + _dir + f.name + "</h3>");
