@@ -1,0 +1,7 @@
+Switch to documentfragment system for building pages:
+https://coderwall.com/p/o9ws2g/why-you-should-always-append-dom-elements-using-documentfragments
+https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
+https://developer.mozilla.org/en-US/docs/Web/API/Document/createAttribute
+https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode
+https://developer.mozilla.org/en-US/docs/Web/API/Document

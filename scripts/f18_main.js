@@ -4,6 +4,8 @@ var f18_proto = function ()
     var _build = rw_scripts.html.build,
         _help = rw_scripts.html.help;
 
+    var _rw = rw_scripts_new.builder;
+
     // Local Vars
     var _show_debug = false;
 
@@ -43,7 +45,7 @@ var f18_proto = function ()
             _build.add_text("<h1 id='f18_title'>Fight 2018 Prototype</h1>");
             _build.apply_html("f18_header");
 
-            _build.add_button("but_test", "Run", "f18_proto.page.file_test();");
+            _build.add_button("but_test", "Run", "f18_proto.page.dumb_test();");
             _build.apply_html("f18_main");
 
             if (_show_debug)
@@ -51,6 +53,14 @@ var f18_proto = function ()
                 _build.add_text("f18_main.js loaded.");
                 _build.apply_html("f18_footer");
             }
+        };
+
+        function dumb_test ()
+        {
+            _rw.add_text("Hello, world!");
+            _rw.add_line_break();
+            _rw.add_button("rw_test", "Test", "alert('derp?');");
+            _rw.apply("f18_main");
         };
 
         function file_test ()
@@ -149,7 +159,8 @@ var f18_proto = function ()
             test: test,
             welcome: welcome,
             file_test: file_test,
-            text_display: text_display
+            text_display: text_display,
+            dumb_test: dumb_test
         };
     }();
 
