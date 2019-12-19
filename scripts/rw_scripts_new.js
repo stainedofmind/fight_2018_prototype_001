@@ -19,13 +19,24 @@ var rw_scripts_new = function ()
 
 	var html = function ()
 	{
-		function get_elem (element_id)
+		function elem_get (_id)
 		{
-			return (document.getElementById(element_id));
+			return (document.getElementById(_id));
+		};
+
+		function elem_clear (_id)
+		{
+			var _elem = elem_get(_id);
+
+			while (_elem.firstChild)
+			{
+				_elem.removeChild(_elem.firstChild);
+			};
 		};
 
 		return {
-			get_elem: get_elem
+			elem_get: elem_get,
+			elem_clear: elem_clear
 		};
 	}();
 
@@ -41,6 +52,32 @@ var rw_scripts_new = function ()
 		function add_text (_text)
 		{
 			var _elem = document.createTextNode(_text);
+			__doc.appendChild(_elem);
+		};
+
+		function add_generic (_type)
+		{
+			var _elem = document.createElement(_type),
+				i = 1;
+
+			while (i < arguments.length - 1)
+			{
+				if (arguments[i] == "innerHTML")
+				{
+					i++;
+
+					_elem.innerHTML = arguments[i++];
+				}
+				else
+				{
+					var _attr = document.createAttribute(arguments[i++]);
+
+					_attr.value = arguments[i++];
+
+					_elem.setAttributeNode(_attr);
+				}
+			}
+
 			__doc.appendChild(_elem);
 		};
 
@@ -65,26 +102,37 @@ var rw_scripts_new = function ()
 			__doc.appendChild(_elem);
 		};
 
-		function add_line_break ()
+		function add_br ()
 		{
 			var _elem = document.createElement("br");
 
 			__doc.appendChild(_elem);
 		};
 
+		function add_hr ()
+		{
+			var _elem = document.createElement("hr");
+
+			__doc.appendChild(_elem);
+		};
+
 		function apply (_id)
 		{
-			var _elem = html.get_elem(_id);
+			var _elem = html.elem_get(_id);
 
-			document.body.replaceChild(__doc, _elem);
+			html.elem_clear(_id);
+
+			_elem.appendChild(__doc);
 			clear ();
 		};
 
 		return {
 			clear: clear,
 			add_text: add_text,
+			add_generic: add_generic,
 			add_button: add_button,
-			add_line_break: add_line_break,
+			add_br: add_br,
+			add_hr: add_hr,
 			apply: apply
 		};
 	}();

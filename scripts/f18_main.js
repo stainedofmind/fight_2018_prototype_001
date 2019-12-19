@@ -58,8 +58,10 @@ var f18_proto = function ()
         function dumb_test ()
         {
             _rw.add_text("Hello, world!");
-            _rw.add_line_break();
+            _rw.add_br();
             _rw.add_button("rw_test", "Test", "alert('derp?');");
+            _rw.add_hr();
+            _rw.add_generic("p", "id", "derp", "innerHTML", "I R GENERIC!");
             _rw.apply("f18_main");
         };
 
