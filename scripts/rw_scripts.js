@@ -1,13 +1,5 @@
 var rw_scripts = function ()
 {
-	var text = "Wobble";
-
-	// Unclassified functions
-	function test ()
-	{
-		return (text);
-	};
-
 	function is_array (data)
 	{
 		return (typeof members === 'object' && typeof members.slice === 'function');
@@ -27,108 +19,178 @@ var rw_scripts = function ()
 
 	var html = function ()
 	{
-		var build = function ()
+		function elem_get (_id)
 		{
-			var html = "";
+			return (document.getElementById(_id));
+		};
 
-			function apply_html (element_id)
+		function elem_clear (_elem)
+		{
+			while (_elem.firstChild)
 			{
-				document.getElementById(element_id).innerHTML = html;
-				html = "";
+				_elem.removeChild(_elem.firstChild);
+			};
+		};
+
+		function elem_set_attrs (_elem)
+		{
+			var i = 1;
+
+			while (i < arguments.length - 1)
+			{
+				if (arguments[i] == "innerHTML")
+				{
+					i++;
+
+					_elem.innerHTML = arguments[i++];
+				}
+				else
+				{
+					var _attr = document.createAttribute(arguments[i++]);
+
+					_attr.value = arguments[i++];
+
+					_elem.setAttributeNode(_attr);
+				}
 			}
-
-			function get_html (clear = true)
-			{
-				var _html = html;
-				if (clear)
-				{
-					html = "";
-				}
-				return (_html);
-			};
-
-			function add_text (text)
-			{
-				html += text;
-			};
-
-			function add_button (id, text, on_click)
-			{
-				html += '<input id = "' + id + '" type = "button" value = "' + text + '" onclick = "' + on_click + '" />';
-			};
-
-			function add_number_box (id, min, max, value)
-			{
-				html += '<input id = "' + id + '" type = "number" min = "' + min + '" max = "' + max +'" value = "' + value + '" />';
-			};
-
-			function add_check_box (id, check = false)
-			{
-				var checked = "";
-
-				if (check)
-				{
-					checked = " checked ";
-				}
-
-				html += '<input id = "' + id + '" type = "checkbox"' + checked + '/>';
-			};
-
-			function add_line_break ()
-			{
-				html += "<br />";
-			};
-
-			function clear_html ()
-			{
-				html = "";
-			};
-
-			return {
-				get_html: get_html,
-				add_text: add_text,
-				add_button: add_button,
-				clear_html: clear_html,
-				add_number_box: add_number_box,
-				add_line_break: add_line_break,
-				add_check_box: add_check_box,
-				apply_html: apply_html
-			};
-		}();
-
-		var help = function ()
-		{
-			function set_html (element_id, html)
-			{
-    			document.getElementById(element_id).innerHTML = html;
-			};
-
-			function get_elem (element_id, html)
-			{
-    			return (document.getElementById(element_id));
-			};
-
-			function clear_html (element_id)
-			{
-    			document.getElementById(element_id).innerHTML = "";
-			};
-			return {
-				set_html: set_html,
-				get_elem: get_elem,
-				clear_html: clear_html
-			};
-		}();
+		};
 
 		return {
-			build: build,
-			help: help
+			elem_get: elem_get,
+			elem_clear: elem_clear,
+			elem_set_attrs: elem_set_attrs
+		};
+	}();
+
+	var builder = function ()
+	{
+		var __doc = document.createDocumentFragment();
+
+		function clear ()
+		{
+			__doc = document.createDocumentFragment();
+		};
+
+		function add_text (_text)
+		{
+			var _elem = document.createTextNode(_text);
+
+			__doc.appendChild(_elem);
+
+			return (_elem);
+		};
+
+		function add_generic (_type)
+		{
+			var _elem = document.createElement(_type),
+				i = 1;
+
+			while (i < arguments.length - 1)
+			{
+				if (arguments[i] == "innerHTML")
+				{
+					i++;
+
+					_elem.innerHTML = arguments[i++];
+				}
+				else
+				{
+					var _attr = document.createAttribute(arguments[i++]);
+
+					_attr.value = arguments[i++];
+
+					_elem.setAttributeNode(_attr);
+				}
+			}
+
+			__doc.appendChild(_elem);
+
+			return (_elem);
+		};
+
+		function add_button (_id, _text, _on_click)
+		{
+			var _elem = document.createElement("input");
+
+			html.elem_set_attrs(_elem, "id", _id, "type", "button", "value", _text, "onclick", _on_click);
+
+			__doc.appendChild(_elem);
+
+			return (_elem);
+		};
+
+		function add_num_box (_id, _val, _min, _max)
+		{
+			var _elem = document.createElement("input");
+
+			html.elem_set_attrs(_elem, "id", _id, "type", "number", "value", _val, "min", _min, "max", _max);
+
+			__doc.appendChild(_elem);
+
+			return (_elem);
+		};
+
+		function add_check_box (_id, _text = "", _checked = false)
+		{
+			var _elem = document.createElement("input"),
+				_txt = document.createTextNode(_text);
+
+			html.elem_set_attrs(_elem, "id", _id, "type", "checkbox");
+
+			_elem.checked = _checked;
+
+			__doc.appendChild(_elem);
+			__doc.appendChild(_txt);
+
+			return (_elem);
+		};
+
+		function add_br ()
+		{
+			var _elem = document.createElement("br");
+
+			__doc.appendChild(_elem);
+
+			return (_elem);
+		};
+
+		function add_hr ()
+		{
+			var _elem = document.createElement("hr");
+
+			__doc.appendChild(_elem);
+
+			return (_elem);
+		};
+
+		function apply (_id)
+		{
+			var _elem = html.elem_get(_id);
+
+			html.elem_clear(_elem);
+
+			_elem.appendChild(__doc);
+
+			clear();
+		};
+
+		return {
+			clear: clear,
+			add_text: add_text,
+			add_generic: add_generic,
+			add_button: add_button,
+			add_num_box: add_num_box,
+			add_check_box: add_check_box,
+			add_br: add_br,
+			add_hr: add_hr,
+			apply: apply
 		};
 	}();
 
 	return {
-		test: test(),
 		is_array: is_array,
 		math: math,
-		html: html
+		html: html,
+		builder: builder
 	};
 }();

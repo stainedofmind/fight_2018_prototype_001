@@ -1,10 +1,6 @@
 var f18_proto = function ()
 {
-    // Shortcuts
-    var _build = rw_scripts.html.build,
-        _help = rw_scripts.html.help;
-
-    var _rw = rw_scripts_new.builder;
+    var _build = rw_scripts.builder;
 
     // Local Vars
     var _show_debug = false;
@@ -26,50 +22,39 @@ var f18_proto = function ()
     {
         function main ()
         {
-            _build.add_text('<div id="f18_header">');
-            _build.add_text('    <!-- Fight 2018 Header Section -->');
-            _build.add_text('</div>');
-            _build.add_text('<hr />');
-            _build.add_text('<div id="f18_main">');
-            _build.add_text('    <!-- Fight 2018 Main Section -->');
-            _build.add_text('</div>');
-            _build.add_text('<hr />');
-            _build.add_text('<div id="f18_footer">');
-            _build.add_text('    <!-- Fight 2018 Footer Section -->');
-            _build.add_text('</div>');
-            _build.apply_html("f18_body");
+            _build.add_generic("div", "id", "f18_header", "innerHTML", "    <!-- Fight 2018 Header Section -->");
+            _build.add_hr();
+            _build.add_generic("div", "id", "f18_main", "innerHTML", "    <!-- Fight 2018 Main Section -->");
+            _build.add_hr();
+            _build.add_generic("div", "id", "f18_footer", "innerHTML", "    <!-- Fight 2018 Footer Section -->");
+            _build.add_hr();
+            _build.apply("f18_body");
         };
 
         function test ()
         {
-            _build.add_text("<h1 id='f18_title'>Fight 2018 Prototype</h1>");
-            _build.apply_html("f18_header");
+            _build.add_generic("h1", "id", "f18_title", "innerHTML", "Fight 2018 Prototype");
+            _build.apply("f18_header");
 
-            _build.add_button("but_test", "Run", "f18_proto.page.dumb_test();");
-            _build.apply_html("f18_main");
+            _build.add_button("but_test", "Run", "f18_proto.page.file_test();");
+            _build.apply("f18_main");
 
             if (_show_debug)
             {
                 _build.add_text("f18_main.js loaded.");
-                _build.apply_html("f18_footer");
+                _build.apply("f18_footer");
             }
-        };
-
-        function dumb_test ()
-        {
-            _rw.add_text("Hello, world!");
-            _rw.add_br();
-            _rw.add_button("rw_test", "Test", "alert('derp?');");
-            _rw.add_hr();
-            _rw.add_generic("p", "id", "derp", "innerHTML", "I R GENERIC!");
-            _rw.apply("f18_main");
         };
 
         function file_test ()
         {
-            _build.add_text('<input id="file_test" type="file" multiple><p />');
+            var _file = _build.add_generic("input", "id", "file_test", "type", "file");
+
+            _file.multiple = true;
+
+            _build.add_generic("p");
             _build.add_button("but_read", "Read File", "f18_proto.page.text_display();");
-            _build.apply_html("f18_main");
+            _build.apply("f18_main");
         }
 
         function welcome ()
@@ -86,11 +71,6 @@ var f18_proto = function ()
 
             var guy = new_pc("Bob", "Guy");
             var gal = new_pc("Jane", "Gal");
-
-            _build.add_text(guy.name + " " + guy.job);
-            _build.add_line_break();
-            _build.add_text(gal.name + " " + gal.job);
-            _build.apply_html("f18_main");
         }
 
         function text_display ()
@@ -123,23 +103,22 @@ var f18_proto = function ()
             {
                 var f = list.files[x];
                 var _dir = f.path.slice(0, f.path.lastIndexOf('\\') + 1);
-                //var text = readTextFile(_dir + f.name);
                 var text = fs.readFileSync(_dir + f.name, "utf8");
                 var lines = text.split("\n");
 
-                _build.add_text("<h3>" + _dir + f.name + "</h3>");
-                _build.add_text("<hr />");
+                _build.add_generic("h3", "innerHTML", _dir + f.name);
+                _build.add_hr();
 
                 for (var i = 0; i < lines.length; i++)
                 {
                     _build.add_text(lines[i]);
-                    _build.add_line_break();
+                    _build.add_br();
 
                     // Modify the lines somehow
                     lines[i] = lines[i].toUpperCase();
                 }
 
-                _build.add_text("<hr />");
+                _build.add_hr();
 
                 fs.copyFileSync(_dir + f.name, 'backup/' + dir + '/' + f.name);
 
@@ -153,7 +132,7 @@ var f18_proto = function ()
                 });
             }
 
-            _build.apply_html("f18_main");
+            _build.apply("f18_main");
         }
 
         return {
@@ -161,8 +140,7 @@ var f18_proto = function ()
             test: test,
             welcome: welcome,
             file_test: file_test,
-            text_display: text_display,
-            dumb_test: dumb_test
+            text_display: text_display
         };
     }();
 
